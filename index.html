@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-DY1P7QQVNN"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-DY1P7QQVNN');
+	</script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/papercss@1.9.2/dist/paper.min.css"
+    />
+	<script
+	  src="https://code.jquery.com/jquery-3.7.1.min.js"
+	  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+	  crossorigin="anonymous"></script>
+	<script src="require.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+	
+	<script></script>
+    <title>Prime Generator</title>
+	<style>
+		main {
+			top: 20px;
+			
+		}
+		#head-top {
+			font-size: 3.5rem;
+			font-weight: 600;
+		}
+		#start-button{
+			position: absolute;
+			top: 40px;
+			right: 40px;
+			height: 100px;
+			width: 300px;
+		}
+		#prime-data {
+			line-break: anywhere;
+		}
+		.primelistnumber {
+			height: 10px;
+		}
+		.primelistnumberlength {
+			height: 10px;
+		}
+		#prime-list {
+			margin-top: 20px;
+		}
+		#prime-list > ul li:before {
+			display: none;
+		}
+		#prime-list > ul {
+			padding-left:20px;
+		}
+		#prime-list li {
+			height: 20px;
+		}
+	</style>
+  </head>
+  <body>
+    <main class="paper container">
+      <div id="head-top">Prime Generator</div>
+	  <p>Prime number generator by Jihyeon Yoon(<a href="https://orcid.org/0000-0001-9610-0994" target="_blank">ORCID 0000-0001-9610-0994</a>).
+	  <br>
+	  This page uses two method in generating prime in sequence.</p>
+	  <ul>
+		<li>Prime Number Sequence</li>
+		<li><a href="https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test" target="_blank">Miller-Rabin Primality Test Algorithm</a></li>
+	  </ul>
+	  <button id="start-button" class="btn-large">Generation Start</button>
+	  <div class="paper container" id="prime">
+		  <div id="prime-count">
+		  </div>
+		  <div id="prime-data">
+		  </div>
+	  </div>
+	  <div id="prime-list">
+		<span class="sort" data-sort="primelistnumber" style="cursor: pointer;">Sort by Number</span>
+		<span class="sort" data-sort="primelistnumberlength" style="cursor: pointer;display: inline-block;right: 40px;position: absolute;">Sort by Length</span>
+		<div>
+		Search / <input class="search" style="display:inline-block;right:0px;width:50vw;width:92%;" />
+		</div>
+		<ul class="list" style="margin-top: 0px;">
+		<li>
+		<div style="width:100%;">
+			<h5 style="display:inline-block;width: 80%;" class="primelistnumber"></h5>
+			<p style="display:inline-block;width: 20%;text-align: right;" class="primelistnumberlength"></p>
+		</div>
+		</li>
+		</ul>
+      </div>
+    </main>
+  </body>
+  <footer>
+  <br><br><br>
+  <center>
+  Libraries used for developing this website as follow:
+  <br>
+  For Implementation of Miller-Rabin Test Algorithm / <a href="https://github.com/latonv/MillerRabinPrimality" target="_blank">https://github.com/latonv/MillerRabinPrimality</a>
+  <br>
+  For RequireJS / <a href="https://github.com/requirejs/requirejs" target="_blank">https://github.com/requirejs/requirejs</a>
+  <br>
+  For PaperCSS / <a href="https://github.com/papercss/papercss" target="_blank">https://github.com/papercss/papercss</a>
+  <br>
+  For List.js / <a href="https://github.com/javve/list.js" target="_blank">https://github.com/javve/list.js</a>
+  <br>
+  For jQuery / <a href="https://code.jquery.com" target="_blank">https://code.jquery.com</a>
+  </center>
+  </footer>
+  <script>
+  require(["./mr.js"], function(mr) {
+	let status = 0; // 0 -> not started, 1 -> started
+	
+	let k=1;
+	let pos = 0;
+	let startDate;
+	let generateds = [BigInt(2), BigInt(3), BigInt(5), BigInt(7)];
+	
+	let options = {
+	  valueNames: [ 'primelistnumber', 'primelistnumberlength' ]
+	};
+
+	var primeList = new List('prime-list', options);
+	
+	function stopGen() {
+		status = 0;
+	}
+	
+	function ecf(x) {
+		return x*x*x + BigInt(3)*x*x + BigInt(2)*x;
+	}
+	
+	async function checkGen(p) {
+		if(generateds.includes(p)) {
+			return true;
+		} else if(!((await mr.primalityTest(p, 40)).probablePrime)) {
+			return true;
+		}
+		return false;
+	}
+	
+	async function startGen() {
+		if(status == 0) {
+			return;
+		}
+		
+		while(true) {
+			let flag = false;
+			for(let i=0;i<generateds.length - 1;i++) {
+				nextPrimeNum = generateds[i] * ecf(BigInt(k)) + generateds[i + 1];
+				if((await checkGen(nextPrimeNum)) == false) {
+					generateds.push(nextPrimeNum);
+					primeList.add({primelistnumber: nextPrimeNum.toString(), primelistnumberlength: nextPrimeNum.toString().length.toString()});
+					flag = true;
+					break;
+				}
+			}
+			if(flag == false) {
+				k=k+1;
+			} else {
+				break;
+			}
+		}
+		
+		let seconds = ((+ new Date()) - startDate) / 1000;
+		let speedps = generateds.length / ((+ new Date()) - startDate) * 1000;
+		$('#prime-count').text('Total ' + generateds.length.toString() + ' / Time Spend ' + seconds + 's / Primes Per Second ' + speedps.toString());
+		$('#prime-data').text(generateds[generateds.length - 1].toString());
+		requestAnimationFrame(startGen);
+	}
+	
+	$('#start-button').click(async () => {
+		if(status == 1) {
+			stopGen();
+			$('#start-button').text('Generation Start');
+			status = 0;
+		} else {
+			$('#start-button').text('Generation Stop');
+			primeList.clear();
+			status = 1;
+			k=1;
+			pos=0;
+			generateds = [BigInt(2), BigInt(3), BigInt(5), BigInt(7)];
+			startDate = (+ new Date());
+			startGen();
+		}
+	});
+  });
+  </script>
+</html>
