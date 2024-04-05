@@ -36,11 +36,8 @@
 			font-weight: 600;
 		}
 		#start-button{
-			position: absolute;
-			top: 40px;
-			right: 40px;
-			height: 100px;
-			width: 300px;
+			width: 100%;
+			margin-top: 20px;
 		}
 		#prime-data {
 			line-break: anywhere;
@@ -75,13 +72,16 @@
 		<li>Prime Number Sequence</li>
 		<li><a href="https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test" target="_blank">Miller-Rabin Primality Test Algorithm</a></li>
 	  </ul>
-	  <button id="start-button" class="btn-large">Generation Start</button>
+	  
 	  <div class="paper container" id="prime">
 		  <div id="prime-count">
+		  <br>
 		  </div>
 		  <div id="prime-data">
+		  <br>
 		  </div>
 	  </div>
+	  <button id="start-button" class="btn-large">Generation Start</button>
 	  <div id="prime-list">
 		<span class="sort" data-sort="primelistnumber" style="cursor: pointer;">Sort by Number</span>
 		<span class="sort" data-sort="primelistnumberlength" style="cursor: pointer;display: inline-block;right: 40px;position: absolute;">Sort by Length</span>
