@@ -23,11 +23,7 @@
 	  crossorigin="anonymous"></script>
 	<script src="require.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
-	<style>
-		* {
-			font-family: Arial !important;
-		}
-	</style>
+	
 	<script></script>
     <title>Prime Generator</title>
 	<style>
@@ -63,6 +59,9 @@
 		}
 		#prime-list li {
 			height: 20px;
+		}
+		* {
+			font-family: Arial !important;
 		}
 	</style>
   </head>
@@ -156,28 +155,28 @@
 			return;
 		}
 		
-		let checks = [];
-		
-		let before = generateds.length;
-		
-		for(let i=0;i<generateds.length-1;i++) {
-			if(i == generateds.length - 1) {
-				return;
+		while(true) {
+			let flag = false;
+			for(let i=0;i<generateds.length - 1;i++) {
+				nextPrimeNum = generateds[i] * ecf(BigInt(k)) + generateds[i + 1];
+				if((await checkGen(nextPrimeNum)) == false) {
+					generateds.push(nextPrimeNum);
+					primeList.add({primelistnumber: nextPrimeNum.toString(), primelistnumberlength: nextPrimeNum.toString().length.toString()});
+					flag = true;
+					break;
+				}
 			}
-			nextPrimeNum = generateds[i] * ecf(BigInt(k)) + generateds[i + 1];
-			if(!(await checkGen(nextPrimeNum))){
-				generateds.push(nextPrimeNum);
+			if(flag == false) {
+				k=k+1;
+			} else {
+				break;
 			}
-		}
-		
-		if(generateds.length == before) {
-			k = k + 1;
 		}
 		
 		let seconds = ((+ new Date()) - startDate) / 1000;
 		let speedps = generateds.length / ((+ new Date()) - startDate) * 1000;
 		$('#prime-count').text('Total ' + generateds.length.toString() + ' / Time Spend ' + seconds + 's / Primes Per Second ' + speedps.toString());
-		document.getElementById('prime-data').textContent = generateds[generateds.length - 1].toString();
+		$('#prime-data').text(generateds[generateds.length - 1].toString());
 		requestAnimationFrame(startGen);
 	}
 	
